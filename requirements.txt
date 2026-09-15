@@ -1,0 +1,15 @@
+fastapi
+uvicorn[standard]
+jinja2
+python-multipart
+python-dotenv
+itsdangerous
+PyMuPDF
+reportlab
+pypdf
+deep-translator
+requests
+pythainlp
+openpyxl
+Pillow
+ImageHash

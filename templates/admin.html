@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<title>ChemSmart - หน้าผู้ดูแล</title>
+<link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+<header>
+    <h1>ChemSmart – ทะเบียนสารเคมี (Admin)</h1>
+    <div>
+        <a href="/">หน้าหลัก</a>
+        &nbsp;|&nbsp;
+        <form method="post" action="/admin/logout" style="display:inline;">
+            <a href="#" onclick="this.closest('form').submit(); return false;">ออกจากระบบ</a>
+        </form>
+    </div>
+</header>
+<main>
+    <div class="card">
+        <div class="step-label">ภาพรวมการใช้งาน (Dashboard)</div>
+        <p style="font-size:0.8rem; color:#888; margin-top:0;">
+            นับจากจำนวนครั้งที่ "สร้าง PDF" สำเร็จ (ทั้งฟอร์ม SDS ติดหน้างาน และฉลากภาชนะบรรจุ) ระบบไม่ได้
+            เก็บ log จำนวนคนเข้าเว็บ เพราะไม่จำเป็นสำหรับงานนี้และเป็นข้อมูลที่ต้องระวังเรื่องความเป็นส่วนตัว
+            ถ้า deploy บน Render free tier ตัวเลขจะรีเซ็ตทุกครั้งที่ redeploy (พื้นที่เก็บข้อมูลไม่ถาวร)
+        </p>
+
+        <div class="stat-grid">
+            <div class="stat-card">
+                <div class="stat-number">{{ stats.total_sds + stats.total_labels }}</div>
+                <div class="stat-label">สร้าง PDF ทั้งหมด</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">{{ stats.today_sds + stats.today_labels }}</div>
+                <div class="stat-label">วันนี้</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">{{ stats.week_sds + stats.week_labels }}</div>
+                <div class="stat-label">7 วันล่าสุด</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">{{ stats.total_sds }} / {{ stats.total_labels }}</div>
+                <div class="stat-label">ฟอร์ม SDS / ฉลากภาชนะ</div>
+            </div>
+        </div>
+
+        <div class="step-label" style="margin-top:20px; font-size:0.95rem;">กิจกรรม 14 วันล่าสุด</div>
+        <div class="chart-scroll">
+            <svg viewBox="0 0 700 130" class="bar-chart" preserveAspectRatio="none">
+                {% for d in stats.daily_activity %}
+                {% set slot_w = 700 / 14 %}
+                {% set bar_w = 30 %}
+                {% set bar_h = (d.count / stats.max_daily * 90) if d.count > 0 else 0 %}
+                {% set bar_x = loop.index0 * slot_w + (slot_w - bar_w) / 2 %}
+                <rect x="{{ bar_x }}" y="{{ 100 - bar_h }}" width="{{ bar_w }}" height="{{ bar_h if bar_h > 0 else 1 }}"
+                      fill="#1f5c99" rx="2"></rect>
+                {% if d.count > 0 %}
+                <text x="{{ bar_x + bar_w/2 }}" y="{{ 100 - bar_h - 4 }}" text-anchor="middle" class="chart-count">{{ d.count }}</text>
+                {% endif %}
+                <text x="{{ bar_x + bar_w/2 }}" y="118" text-anchor="middle" class="chart-date">{{ d.date }}</text>
+                {% endfor %}
+            </svg>
+        </div>
+
+        <div class="step-label" style="margin-top:20px; font-size:0.95rem;">สารเคมีที่สร้างบ่อยที่สุด</div>
+        {% if stats.top_chemicals %}
+        <table>
+            <thead><tr><th>ชื่อสารเคมี</th><th>จำนวนครั้ง</th></tr></thead>
+            <tbody>
+                {% for t in stats.top_chemicals %}
+                <tr><td>{{ t.name }}</td><td>{{ t.cnt }}</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <p style="font-size:0.85rem; color:#888;">ยังไม่มีข้อมูล</p>
+        {% endif %}
+    </div>
+
+    <div class="card">
+        <div class="step-label">เปลี่ยนเทมเพลต SDS ติดหน้างาน (Template.pdf)</div>
+        <p style="font-size:0.85rem; color:#666; margin-top:0;">
+            ใช้ได้เฉพาะไฟล์ที่โครงสร้าง/ตำแหน่งช่องเหมือนเทมเพลตเดิม (เช่น เปลี่ยนแค่ชื่อบริษัท โลโก้ เลขเอกสาร)
+            ถ้าตำแหน่งช่องเปลี่ยนไปจริงๆ ต้องแก้พิกัดในโค้ด <code>fill_template.py</code> ด้วย ไม่งั้นข้อมูลจะวางผิดที่
+            ระบบจะสำรองไฟล์เดิมไว้ให้อัตโนมัติก่อนแทนที่ทุกครั้ง
+        </p>
+        <div class="actions-row">
+            <input type="file" id="templateFile" accept="application/pdf">
+            <button id="uploadTemplateBtn">อัปโหลด Template ใหม่</button>
+        </div>
+        <div id="templateStatus" class="status"></div>
+    </div>
+
+    <div class="card">
+        <div class="step-label">รายการทะเบียนสารเคมีที่สร้างแล้ว ({{ records|length }} รายการ)</div>
+        <table>
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>ชื่อสารเคมี / ชื่อการค้า</th>
+                    <th>CAS No</th>
+                    <th>UN No</th>
+                    <th>วันที่สร้าง</th>
+                    <th>ไฟล์ PDF</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for r in records %}
+                <tr>
+                    <td>{{ r.id }}</td>
+                    <td>{{ r.trade_name }}</td>
+                    <td>{{ r.cas }}</td>
+                    <td>{{ r.un }}</td>
+                    <td>{{ r.created_at }}</td>
+                    <td><a href="/download/{{ r.output_filename }}" target="_blank">ดาวน์โหลด</a></td>
+                    <td><button class="danger" onclick="deleteRecord({{ r.id }})">ลบ</button></td>
+                </tr>
+                {% else %}
+                <tr><td colspan="7">ยังไม่มีรายการ</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</main>
+<script>
+async function deleteRecord(id) {
+    if (!confirm("ยืนยันลบรายการนี้?")) return;
+    const res = await fetch("/admin/api/records/" + id, { method: "DELETE" });
+    if (res.ok) {
+        location.reload();
+    } else {
+        alert("ลบไม่สำเร็จ");
+    }
+}
+
+document.getElementById("uploadTemplateBtn").addEventListener("click", async () => {
+    const statusEl = document.getElementById("templateStatus");
+    const fileInput = document.getElementById("templateFile");
+    if (!fileInput.files.length) {
+        statusEl.textContent = "กรุณาเลือกไฟล์ Template.pdf ก่อน";
+        statusEl.className = "status err";
+        return;
+    }
+    if (!confirm("ยืนยันแทนที่เทมเพลตเดิม? (ระบบจะสำรองไฟล์เดิมไว้ให้)")) return;
+
+    statusEl.textContent = "กำลังอัปโหลด...";
+    statusEl.className = "status busy";
+    const formData = new FormData();
+    formData.append("template_file", fileInput.files[0]);
+    try {
+        const res = await fetch("/admin/api/template", { method: "POST", body: formData });
+        if (!res.ok) {
+            const err = await res.json();
+            throw new Error(err.detail || "อัปโหลดไม่สำเร็จ");
+        }
+        statusEl.textContent = "เปลี่ยนเทมเพลตสำเร็จแล้ว";
+        statusEl.className = "status ok";
+    } catch (ex) {
+        statusEl.textContent = "ผิดพลาด: " + ex.message;
+        statusEl.className = "status err";
+    }
+});
+</script>
+</body>
+</html>

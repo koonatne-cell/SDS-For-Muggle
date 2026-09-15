@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<title>คู่มือการใช้งาน ChemSmart</title>
+<style>
+    @font-face {
+        font-family: "Sarabun";
+        src: url("assets/fonts/Sarabun-Regular.ttf") format("truetype");
+        font-weight: 400;
+    }
+    @font-face {
+        font-family: "Sarabun";
+        src: url("assets/fonts/Sarabun-Bold.ttf") format("truetype");
+        font-weight: 700;
+    }
+    * { box-sizing: border-box; }
+    body {
+        font-family: "Sarabun", "Tahoma", sans-serif;
+        margin: 0;
+        padding: 14px 18px;
+        color: #111;
+        font-size: 12.5px;
+        line-height: 1.35;
+    }
+    h1 {
+        font-size: 20px;
+        margin: 0 0 2px 0;
+        color: #0f3d63;
+    }
+    .subtitle {
+        font-size: 11.5px;
+        color: #555;
+        margin: 0 0 10px 0;
+    }
+    .know-box {
+        border: 1.5px solid #0f3d63;
+        background: #eef5fb;
+        border-radius: 6px;
+        padding: 8px 12px;
+        margin-bottom: 12px;
+    }
+    .know-box .kb-title {
+        font-weight: 700;
+        color: #0f3d63;
+        margin-bottom: 4px;
+        font-size: 13px;
+    }
+    .know-box ul {
+        margin: 0;
+        padding-left: 18px;
+    }
+    .know-box li { margin-bottom: 2px; }
+
+    .cols {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 10px;
+    }
+    .section {
+        border: 1px solid #ccc;
+        border-radius: 6px;
+        padding: 8px 10px;
+        break-inside: avoid;
+    }
+    .section h2 {
+        font-size: 13.5px;
+        margin: 0 0 6px 0;
+        padding-bottom: 4px;
+        border-bottom: 2px solid #0f3d63;
+        color: #0f3d63;
+    }
+    .section h2 small {
+        display: block;
+        font-weight: 400;
+        color: #666;
+        font-size: 10px;
+    }
+    ol.steps {
+        margin: 0;
+        padding-left: 16px;
+    }
+    ol.steps > li {
+        margin-bottom: 6px;
+    }
+    ol.steps b { color: #0f3d63; }
+    .btn-label {
+        display: inline-block;
+        background: #e8eef5;
+        border: 1px solid #aac2d8;
+        border-radius: 3px;
+        padding: 0 4px;
+        font-size: 11px;
+    }
+    .shot {
+        border: 1.5px dashed #999;
+        background: #fafafa;
+        border-radius: 4px;
+        padding: 4px 6px;
+        margin: 3px 0 6px 0;
+        font-size: 10px;
+        color: #777;
+        min-height: 14px;
+    }
+    .note {
+        font-size: 10.5px;
+        color: #666;
+    }
+
+    footer.tip {
+        margin-top: 10px;
+        font-size: 10px;
+        color: #888;
+        text-align: center;
+    }
+
+    /* หน้า 2: เช็คลิสต์สกรีนช็อต (ไม่ต้องติดบอร์ด แค่เก็บไว้ทำงานต่อ) */
+    .checklist-page {
+        page-break-before: always;
+        padding-top: 6px;
+    }
+    .checklist-page h1 {
+        font-size: 17px;
+    }
+    .checklist-page ol {
+        padding-left: 20px;
+    }
+    .checklist-page li {
+        margin-bottom: 8px;
+        font-size: 12px;
+    }
+    .checklist-page li .path {
+        display: block;
+        font-size: 10px;
+        color: #888;
+        margin-top: 1px;
+    }
+    .chk {
+        display: inline-block;
+        width: 12px;
+        height: 12px;
+        border: 1.5px solid #333;
+        margin-right: 6px;
+        vertical-align: -1px;
+    }
+
+    @media print {
+        body { padding: 6mm 8mm; }
+        @page { size: A4; margin: 8mm; }
+        .section { border-color: #999; }
+    }
+</style>
+</head>
+<body>
+
+<h1>คู่มือการใช้งาน ChemSmart</h1>
+<p class="subtitle">ระบบสร้างฟอร์ม SDS ติดหน้างาน และฉลากภาชนะบรรจุสารเคมี — โรงงาน Pringles ชลบุรี &nbsp;|&nbsp; ทำตามขั้นตอนทีละข้อ ไม่ต้องรีบ</p>
+
+<div class="know-box">
+    <div class="kb-title">ข้อควรรู้ก่อนเริ่ม</div>
+    <ul>
+        <li>ไฟล์ SDS ต้อง<b>เป็น PDF ที่เป็นตัวอักษรจริง</b> (เอาเมาส์ลากคลุมข้อความในไฟล์แล้วก็อปได้) ถ้าเป็นไฟล์สแกน/รูปถ่าย ระบบจะดึงข้อมูลไม่ได้</li>
+        <li>ระบบดึงข้อมูล/ติ๊กสัญลักษณ์ให้เป็น<b>ตัวช่วยเบื้องต้นเท่านั้น</b> ต้อง<b>ตรวจสอบข้อมูลทุกครั้ง</b>ก่อนกด "สร้าง PDF" โดยเฉพาะสัญลักษณ์ GHS และ PPE</li>
+        <li>สัญลักษณ์ GHS และค่าดัชนี NFPA (สุขภาพ/ไวไฟ/ปฏิกิริยา) ให้ดูจาก <b>Section 2</b> ของเอกสาร SDS ต้นฉบับ</li>
+        <li>หน้า SDS ติดหน้างาน: ถ้ายังไม่กรอกชื่อผู้จัดทำ/ตำแหน่ง หรือยังไม่แนบรูปครบ 2 รูป ระบบจะ<b>ไฮไลท์สีแดง</b>และไม่ยอมสร้าง PDF ให้</li>
+        <li>ไฟล์ PDF ที่ได้จะถูกตั้งชื่อให้อัตโนมัติ เช่น <span class="btn-label">SDS_ชื่อสาร_วันที่.pdf</span> หรือ <span class="btn-label">Label_ชื่อสาร_วันที่.pdf</span></li>
+    </ul>
+</div>
+
+<div class="cols">
+
+    <div class="section">
+        <h2>(ก) ทำ SDS ติดหน้างาน <small>หน้าแรกของเว็บ ( / )</small></h2>
+        <ol class="steps">
+            <li>กรอก <b>ชื่อ-สกุล</b> และ <b>ตำแหน่ง</b> ของผู้จัดทำ ในกล่อง "ข้อมูลผู้ขอขึ้นทะเบียน" ด้านบนสุด (บังคับกรอก)</li>
+            <li>เลือกไฟล์ SDS (PDF) แล้วกด <span class="btn-label">ดึงข้อมูลจาก SDS</span>
+                <div class="shot">[รูป: หน้าจอ Step 1 ตอนเลือกไฟล์ SDS + ปุ่ม "ดึงข้อมูลจาก SDS"]</div>
+            </li>
+            <li>ตรวจ/แก้ไขข้อมูลที่ดึงมาให้ถูกต้อง กด <span class="btn-label">แปลเป็นไทย</span> แล้วเช็คช่อง GHS pictogram (ดู Section 2) และ PPE (ระบบติ๊กให้จาก Section 8 อัตโนมัติ แต่ต้องตรวจซ้ำ)
+                <div class="shot">[รูป: ฟอร์ม Step 2 ส่วนสัญลักษณ์ GHS และ PPE หลังติ๊กแล้ว]</div>
+            </li>
+            <li>แนบ <b>รูปฉลากสารเคมี</b> และ <b>รูปภาชนะบรรจุสารเคมี</b> ใน Step 3 (บังคับแนบทั้งสองรูป)</li>
+            <li>กด <span class="btn-label">สร้าง PDF</span> รอสักครู่ แล้วกด <span class="btn-label">ดาวน์โหลด PDF</span>
+                <div class="shot">[รูป: หน้าจอหลังกด "สร้าง PDF" สำเร็จ พร้อมปุ่มดาวน์โหลด]</div>
+            </li>
+        </ol>
+    </div>
+
+    <div class="section">
+        <h2>(ข) ทำฉลากภาชนะ <small>หน้า "สร้างฉลากภาชนะบรรจุ" ( /label )</small></h2>
+        <ol class="steps">
+            <li>เลือกไฟล์ SDS แล้วกด <span class="btn-label">ดึงข้อมูลจาก SDS</span> (หรือกรอกข้อมูลฉลากเองก็ได้)
+                <div class="shot">[รูป: หน้า /label หลังดึงข้อมูลจาก SDS สำเร็จ]</div>
+            </li>
+            <li>ตรวจ/แก้ไขข้อมูล กด <span class="btn-label">แปลเป็นไทย</span> เช็คชื่อผลิตภัณฑ์ CAS No คำสัญญาณ สัญลักษณ์ GHS และข้อความอันตราย/ระวัง</li>
+            <li>เลือก <b>ขนาดฉลาก</b> (เล็ก / กลาง / ใหญ่ / A4 / A5 / A6 / กำหนดขนาดเอง) — ฉลากจะพิมพ์ออกมาเป็น<b>แนวนอนเสมอ</b>
+                <div class="shot">[รูป: ช่องเลือกขนาดฉลากใน Step 3]</div>
+            </li>
+            <li>กด <span class="btn-label">สร้าง PDF ฉลาก</span> แล้วกด <span class="btn-label">ดาวน์โหลด PDF</span> นำไปพิมพ์ติดภาชนะ
+                <div class="shot">[รูป: ตัวอย่างฉลาก PDF ที่พิมพ์ออกมาสมบูรณ์]</div>
+            </li>
+        </ol>
+    </div>
+
+    <div class="section">
+        <h2>(ค) ส่วนผู้ดูแล <small>หน้า Admin ( /admin )</small></h2>
+        <ol class="steps">
+            <li>กดลิงก์ <span class="btn-label">สำหรับผู้ดูแล (Admin)</span> ที่หัวเว็บ แล้วกรอก<b>รหัสผู้ดูแล</b> เพื่อเข้าสู่ระบบ
+                <div class="shot">[รูป: หน้าจอกรอกรหัสผู้ดูแล]</div>
+            </li>
+            <li>ดู <b>Dashboard</b>: จำนวน PDF ที่สร้างทั้งหมด/วันนี้/7 วันล่าสุด กราฟกิจกรรม 14 วัน และสารเคมีที่สร้างบ่อยที่สุด
+                <div class="shot">[รูป: หน้า Dashboard พร้อมกราฟและตัวเลขสถิติ]</div>
+            </li>
+            <li>เลื่อนลงดู <b>รายการทะเบียนสารเคมี</b>ที่สร้างแล้วทั้งหมด กดดาวน์โหลดไฟล์ซ้ำ หรือกด "ลบ" รายการที่ไม่ต้องการได้</li>
+            <li>(ขั้นสูง) เปลี่ยนไฟล์เทมเพลต SDS (Template.pdf) ได้ในกล่อง "เปลี่ยนเทมเพลต SDS ติดหน้างาน" — ระบบจะสำรองไฟล์เดิมให้อัตโนมัติก่อนแทนที่ทุกครั้ง ใช้ต่อเมื่อโครงสร้างช่องเหมือนเดิมเท่านั้น</li>
+        </ol>
+    </div>
+
+</div>
+
+<footer class="tip">ChemSmart — คู่มือนี้พิมพ์ (Ctrl+P) เป็นกระดาษ A4 ติดบอร์ดหน้างานได้ &nbsp;|&nbsp; หน้าถัดไป: เช็กลิสต์ภาพหน้าจอที่ต้องถ่ายเพิ่ม (ไม่ต้องพิมพ์)</footer>
+
+<div class="checklist-page">
+<h1>เช็กลิสต์ภาพหน้าจอที่ต้องถ่าย</h1>
+<p class="note">ถ่ายภาพหน้าจอตามลิสต์นี้แล้วนำไปวางแทนช่อง [รูป: ...] ในหน้าแรกของคู่มือ (หน้านี้ไม่ต้องพิมพ์ ใช้เก็บไว้ทำงานต่อ)</p>
+<ol>
+    <li><span class="chk"></span>หน้าจอ Step 1 (หน้า /) ตอนเลือกไฟล์ SDS พร้อมปุ่ม "ดึงข้อมูลจาก SDS"
+        <span class="path">ตำแหน่งในคู่มือ: (ก) ข้อ 2</span></li>
+    <li><span class="chk"></span>ฟอร์ม Step 2 ส่วนสัญลักษณ์ GHS และ PPE หลังติ๊กเลือกแล้ว
+        <span class="path">ตำแหน่งในคู่มือ: (ก) ข้อ 3</span></li>
+    <li><span class="chk"></span>หน้าจอหลังกด "สร้าง PDF" สำเร็จ พร้อมปุ่ม "ดาวน์โหลด PDF" ที่ปรากฏขึ้น
+        <span class="path">ตำแหน่งในคู่มือ: (ก) ข้อ 5</span></li>
+    <li><span class="chk"></span>หน้า /label หลังกด "ดึงข้อมูลจาก SDS" สำเร็จ เห็นข้อมูลเต็มฟอร์ม
+        <span class="path">ตำแหน่งในคู่มือ: (ข) ข้อ 1</span></li>
+    <li><span class="chk"></span>ช่องเลือก "ขนาดฉลาก" ใน Step 3 ของหน้า /label (drop-down ที่มีตัวเลือกขนาดต่างๆ)
+        <span class="path">ตำแหน่งในคู่มือ: (ข) ข้อ 3</span></li>
+    <li><span class="chk"></span>ตัวอย่างไฟล์ฉลาก PDF ที่สร้างเสร็จสมบูรณ์ (เปิดไฟล์ที่ดาวน์โหลดมาดู)
+        <span class="path">ตำแหน่งในคู่มือ: (ข) ข้อ 4</span></li>
+    <li><span class="chk"></span>หน้าจอกรอกรหัสผู้ดูแล ก่อนเข้า /admin
+        <span class="path">ตำแหน่งในคู่มือ: (ค) ข้อ 1</span></li>
+    <li><span class="chk"></span>หน้า Dashboard ของ /admin (ตัวเลขสถิติ + กราฟกิจกรรม 14 วัน)
+        <span class="path">ตำแหน่งในคู่มือ: (ค) ข้อ 2</span></li>
+</ol>
+</div>
+
+</body>
+</html>

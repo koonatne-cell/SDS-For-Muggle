@@ -1,0 +1,32 @@
+# ข้อมูลลับ ห้ามอัพขึ้น GitHub เด็ดขาด
+.env
+
+# ฐานข้อมูล + ไฟล์ที่ผู้ใช้อัปโหลด/สร้างระหว่างใช้งาน (สร้างใหม่อัตโนมัติตอนรันแอป)
+data/chemsafe.db
+data/uploads/*
+data/generated/*
+data/sds_uploads/*
+!data/uploads/.gitkeep
+!data/generated/.gitkeep
+!data/sds_uploads/.gitkeep
+
+# ไฟล์สำรองเทมเพลตที่ Admin อัปโหลดใหม่ (เก็บเฉพาะในเครื่องจริง ไม่ต้อง track)
+assets/template_backups/*
+!assets/template_backups/.gitkeep
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+
+# ไฟล์ระบบปฏิบัติการ/เครื่องมือแก้ไข
+.DS_Store
+Thumbs.db
+.vscode/
+
+# ค่าตั้งค่า dev ส่วนตัว (มี path เฉพาะเครื่องนี้ ไม่เกี่ยวกับโปรเจกต์)
+.claude/
+
+# ไฟล์ SDS ตัวอย่างสำหรับทดสอบเฉยๆ (เป็นเอกสารจริงของ Agilent Technologies ไม่ใช่ของเรา
+# ไม่จำเป็นต่อการรันแอป ใช้แค่ตอนทดสอบ parser.py เอง) ไม่ต้องอัพขึ้น repo public
+getpdf_sample.pdf

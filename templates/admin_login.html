@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<title>ChemSmart - เข้าสู่ระบบผู้ดูแล</title>
+<link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+<header>
+    <h1>ChemSmart – เข้าสู่ระบบผู้ดูแล</h1>
+    <a href="/">กลับหน้าหลัก</a>
+</header>
+<main>
+    <div class="card login-box">
+        <div class="step-label">กรอกรหัสผู้ดูแล (Admin passcode)</div>
+        <form method="post" action="/admin/login">
+            <div class="field-row">
+                <input type="password" name="passcode" placeholder="รหัสผู้ดูแล" required>
+            </div>
+            <button type="submit">เข้าสู่ระบบ</button>
+        </form>
+        {% if error %}
+        <div class="status err" style="margin-top:12px;">{{ error }}</div>
+        {% endif %}
+    </div>
+</main>
+</body>
+</html>

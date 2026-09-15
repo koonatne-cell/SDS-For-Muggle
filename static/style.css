@@ -1,0 +1,223 @@
+/* style.css - หน้าตาเรียบง่าย เน้นอ่านง่าย ใช้งานง่าย */
+* { box-sizing: border-box; }
+body {
+    font-family: "Tahoma", "Segoe UI", sans-serif;
+    background: #f4f6f8;
+    color: #222;
+    margin: 0;
+    padding: 0;
+}
+header {
+    background: #1f5c99;
+    color: white;
+    padding: 16px 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+header h1 { margin: 0; font-size: 1.3rem; }
+header a { color: #cfe4ff; text-decoration: none; font-size: 0.9rem; }
+header a:hover { text-decoration: underline; }
+.header-links { display: flex; gap: 18px; align-items: center; }
+
+main {
+    max-width: 900px;
+    margin: 20px auto;
+    padding: 0 16px 60px;
+}
+
+.card {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.12);
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+.step-label {
+    font-weight: bold;
+    color: #1f5c99;
+    margin-bottom: 8px;
+}
+
+button {
+    background: #1f5c99;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 10px 18px;
+    font-size: 0.95rem;
+    cursor: pointer;
+}
+button:hover:not(:disabled) { background: #164a7d; }
+button:disabled { background: #a9b7c5; cursor: not-allowed; }
+button.secondary { background: #6c757d; }
+button.secondary:hover:not(:disabled) { background: #565e64; }
+button.danger { background: #b02a37; }
+button.danger:hover:not(:disabled) { background: #8f222c; }
+
+input[type="file"], input[type="password"], input[type="text"] {
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 0.95rem;
+}
+
+.status {
+    margin-top: 10px;
+    font-size: 0.9rem;
+}
+.status.ok { color: #0a7a3c; }
+.status.err { color: #b02a37; }
+.status.busy { color: #a06a00; }
+
+/* ไฮไลท์แดงตรงช่องบังคับกรอกที่ยังไม่กรอก (ชื่อผู้จัดทำ/รูปฉลาก/รูปภาชนะ) - เพิ่มตอนกด "สร้าง PDF"
+   แล้วพบว่ายังกรอกไม่ครบ ลบออกเองทันทีที่ผู้ใช้เริ่มกรอก/เลือกไฟล์ (ดู static/app.js) */
+.field-missing input[type="text"],
+input[type="file"].field-missing {
+    border-color: #b02a37 !important;
+    background: #fdecee;
+}
+.field-row.field-missing label,
+.image-box.field-missing > div:first-child {
+    color: #b02a37;
+    font-weight: bold;
+}
+
+fieldset {
+    border: 1px solid #dfe3e8;
+    border-radius: 6px;
+    margin-bottom: 14px;
+    padding: 10px 14px 14px;
+}
+legend {
+    font-weight: bold;
+    color: #1f5c99;
+    padding: 0 6px;
+}
+
+.field-row {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 10px;
+}
+.field-row label {
+    font-size: 0.85rem;
+    color: #444;
+    margin-bottom: 4px;
+}
+.field-row textarea, .field-row input[type="text"] {
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-family: inherit;
+    font-size: 0.9rem;
+    resize: vertical;
+}
+
+.pictogram-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+.pictogram-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 90px;
+    text-align: center;
+    font-size: 0.75rem;
+    color: #444;
+    cursor: pointer;
+    padding: 6px;
+    border: 1px solid transparent;
+    border-radius: 6px;
+}
+.pictogram-item:has(input:checked) {
+    border-color: #1f5c99;
+    background: #eaf2fb;
+}
+.pictogram-item img {
+    width: 48px;
+    height: 48px;
+    margin-bottom: 4px;
+}
+.pictogram-item input {
+    margin-bottom: 4px;
+}
+
+.image-boxes {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+.image-box {
+    flex: 1;
+    min-width: 220px;
+    text-align: center;
+}
+.image-box img {
+    max-width: 100%;
+    max-height: 160px;
+    margin-top: 8px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+}
+
+.actions-row {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+}
+th, td {
+    text-align: left;
+    padding: 8px 10px;
+    border-bottom: 1px solid #eee;
+}
+th { color: #1f5c99; }
+
+.hidden { display: none !important; }
+
+.stat-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 12px;
+    margin: 14px 0;
+}
+.stat-card {
+    background: #f4f6f8;
+    border-radius: 8px;
+    padding: 14px;
+    text-align: center;
+}
+.stat-number {
+    font-size: 1.6rem;
+    font-weight: bold;
+    color: #1f5c99;
+}
+.stat-label {
+    font-size: 0.8rem;
+    color: #666;
+    margin-top: 4px;
+}
+
+.chart-scroll { overflow-x: auto; }
+.bar-chart {
+    width: 100%;
+    min-width: 500px;
+    height: 150px;
+}
+.chart-count { font-size: 8px; fill: #1f5c99; font-weight: bold; }
+.chart-date { font-size: 8px; fill: #888; }
+
+.login-box {
+    max-width: 360px;
+    margin: 80px auto;
+}

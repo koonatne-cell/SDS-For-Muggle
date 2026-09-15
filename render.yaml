@@ -1,0 +1,16 @@
+services:
+  - type: web
+    name: chemsafe
+    env: python
+    plan: free
+    buildCommand: "pip install -r requirements.txt"
+    startCommand: "uvicorn main:app --host 0.0.0.0 --port $PORT"
+    envVars:
+      - key: ADMIN_PASSCODE
+        sync: false
+      - key: SECRET_KEY
+        sync: false
+      - key: GOOGLE_TRANSLATE_API_KEY
+        sync: false
+      - key: PYTHON_VERSION
+        value: 3.12.10

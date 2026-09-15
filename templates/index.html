@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<title>ChemSmart - แปลง SDS เป็นฟอร์มติดหน้างาน</title>
+<link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+<header>
+    <h1>ChemSmart – แปลง SDS เป็นฟอร์มติดหน้างาน</h1>
+    <div class="header-links">
+        <a href="/label">สร้างฉลากภาชนะบรรจุ</a>
+        <a href="/admin">สำหรับผู้ดูแล (Admin)</a>
+    </div>
+</header>
+<main>
+
+    <!-- div#sdsForm ครอบทุกช่องกรอกข้อความ (ไม่ใช้ <form> จริงเพราะส่งข้อมูลผ่าน fetch เอง)
+         app.js จะดึงค่าจากทุก textarea/input ที่อยู่ข้างในนี้ตอนกด "สร้าง PDF" -->
+    <div id="sdsForm">
+
+    <div class="card">
+        <div class="step-label">ข้อมูลผู้ขอขึ้นทะเบียน (Requester Information)</div>
+        <fieldset>
+            {% for key, label in signature_fields %}
+            <div class="field-row">
+                <label for="f_{{ key }}">{{ label }}</label>
+                <input type="text" id="f_{{ key }}" name="{{ key }}">
+            </div>
+            {% endfor %}
+        </fieldset>
+    </div>
+
+    <div class="card">
+        <div class="step-label">ขั้นตอนที่ 1: เลือกไฟล์ SDS (PDF ภาษาอังกฤษ)</div>
+        <div class="actions-row">
+            <input type="file" id="sdsFile" accept="application/pdf">
+            <button id="parseBtn">ดึงข้อมูลจาก SDS</button>
+        </div>
+        <div id="parseStatus" class="status"></div>
+    </div>
+
+    <div class="card" id="formCard">
+        <div class="step-label">ขั้นตอนที่ 2: ตรวจ/แก้ไขข้อมูล แล้วกด "แปลเป็นไทย" (แก้คำแปลได้อีกครั้ง)</div>
+        <div class="actions-row" style="margin-bottom: 16px;">
+            <button id="translateBtn">แปลเป็นไทย</button>
+            <button id="translateEnBtn" class="secondary">แปลเป็นอังกฤษ</button>
+            <span id="translateStatus" class="status"></span>
+        </div>
+
+        {% for group_name, group_fields in field_groups %}
+            <fieldset>
+                <legend>{{ group_name }}</legend>
+                {% for key, label, translatable in group_fields %}
+                <div class="field-row">
+                    <label for="f_{{ key }}">{{ label }}</label>
+                    <textarea id="f_{{ key }}" name="{{ key }}" rows="2"></textarea>
+                </div>
+                {% endfor %}
+            </fieldset>
+        {% endfor %}
+
+        <fieldset>
+            <legend>คุณสมบัติพิเศษ (Special Hazard)</legend>
+            <div class="field-row">
+                <label for="f_nfpa_special">Special Hazard</label>
+                <select id="f_nfpa_special" name="nfpa_special">
+                    {% for value, label in nfpa_special_options %}
+                    <option value="{{ value }}">{{ label }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </fieldset>
+
+        <fieldset>
+            <legend>สัญลักษณ์ GHS (ติ๊กเลือกเอง ดูจาก Section 2 ของ SDS ก่อนสร้าง PDF)</legend>
+            <div class="pictogram-grid">
+                {% for key, label in pictogram_fields %}
+                <label class="pictogram-item">
+                    <input type="checkbox" id="pic_{{ key }}" name="pictograms" value="{{ key }}">
+                    <img src="/static/ghs_icons/{{ key }}.png" alt="{{ label }}">
+                    <span>{{ label }}</span>
+                </label>
+                {% endfor %}
+            </div>
+        </fieldset>
+
+        <fieldset>
+            <legend>อุปกรณ์คุ้มครองความปลอดภัยส่วนบุคคล (PPE) (ระบบติ๊กให้อัตโนมัติจาก Section 8 ของ SDS - ตรวจสอบ/แก้ไขเองได้)</legend>
+            <div class="pictogram-grid">
+                {% for key, label in ppe_fields %}
+                <label class="pictogram-item">
+                    <input type="checkbox" id="ppe_{{ key }}" name="ppe" value="{{ key }}">
+                    <img src="/static/ppe_icons/{{ key }}.png" alt="{{ label }}">
+                    <span>{{ label }}</span>
+                </label>
+                {% endfor %}
+            </div>
+        </fieldset>
+    </div>
+
+    </div><!-- /#sdsForm -->
+
+    <div class="card">
+        <div class="step-label">ขั้นตอนที่ 3: แนบรูปภาพ</div>
+        <div class="image-boxes">
+            <div class="image-box">
+                <div>รูปฉลากสารเคมี</div>
+                <input type="file" id="labelImage" accept="image/*">
+                <div><img id="labelImagePreview" class="hidden"></div>
+            </div>
+            <div class="image-box">
+                <div>รูปภาชนะบรรจุสารเคมี</div>
+                <input type="file" id="containerImage" accept="image/*">
+                <div><img id="containerImagePreview" class="hidden"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="step-label">ขั้นตอนที่ 4: สร้างและดาวน์โหลด PDF</div>
+        <div class="actions-row">
+            <button id="generateBtn">สร้าง PDF</button>
+            <a id="downloadLink" class="hidden" href="#" target="_blank">
+                <button type="button" class="secondary">ดาวน์โหลด PDF</button>
+            </a>
+        </div>
+        <div id="generateStatus" class="status"></div>
+    </div>
+
+</main>
+<script src="/static/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<title>ChemSmart - สร้างฉลากภาชนะบรรจุสารเคมี</title>
+<link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+<header>
+    <h1>ChemSmart – สร้างฉลากภาชนะบรรจุสารเคมี</h1>
+    <div class="header-links">
+        <a href="/">กลับหน้า SDS ติดหน้างาน</a>
+        <a href="/admin">สำหรับผู้ดูแล (Admin)</a>
+    </div>
+</header>
+<main>
+
+    <div id="labelForm">
+
+    <div class="card">
+        <div class="step-label">ขั้นตอนที่ 1: เลือกไฟล์ SDS (PDF) เพื่อดึงข้อมูลอัตโนมัติ</div>
+        <div class="actions-row">
+            <input type="file" id="sdsFile" accept="application/pdf">
+            <button id="parseBtn">ดึงข้อมูลจาก SDS</button>
+        </div>
+        <div id="parseStatus" class="status"></div>
+    </div>
+
+    <div class="card">
+        <div class="step-label">ขั้นตอนที่ 2: ตรวจ/แก้ไขข้อมูลบนฉลาก</div>
+        <div class="actions-row" style="margin-bottom: 16px;">
+            <button id="translateBtn">แปลเป็นไทย</button>
+            <button id="translateEnBtn" class="secondary">แปลเป็นอังกฤษ</button>
+            <span id="translateStatus" class="status"></span>
+        </div>
+
+        <fieldset>
+            <legend>ข้อมูลหลัก</legend>
+            <div class="field-row">
+                <label for="f_product_name">ชื่อผลิตภัณฑ์ (Product Name)</label>
+                <textarea id="f_product_name" name="product_name" rows="2"></textarea>
+            </div>
+            <div class="field-row">
+                <label for="f_cas">CAS No</label>
+                <input type="text" id="f_cas" name="cas">
+            </div>
+            <div class="field-row">
+                <label for="f_un">UN No</label>
+                <input type="text" id="f_un" name="un">
+            </div>
+            <div class="field-row">
+                <label for="f_signal_word">คำสัญญาณ (Signal Words)</label>
+                <input type="text" id="f_signal_word" name="signal_word" value="อันตราย">
+            </div>
+        </fieldset>
+
+        <fieldset>
+            <legend>สารเคมีอันตราย (Hazardous Substances)</legend>
+            <div class="field-row">
+                <textarea id="f_hazardous_substances" name="hazardous_substances" rows="3"
+                          placeholder="เช่น Sodium hydroxide"></textarea>
+            </div>
+        </fieldset>
+
+        <fieldset>
+            <legend>รูปสัญลักษณ์ (GHS Pictograms)</legend>
+            <div class="pictogram-grid">
+                {% for key, label in pictogram_fields %}
+                <label class="pictogram-item">
+                    <input type="checkbox" id="pic_{{ key }}" name="pictograms" value="{{ key }}">
+                    <img src="/static/ghs_icons/{{ key }}.png" alt="{{ label }}">
+                    <span>{{ label }}</span>
+                </label>
+                {% endfor %}
+            </div>
+        </fieldset>
+
+        <fieldset>
+            <legend>ข้อความแสดงอันตราย (Hazard Statements)</legend>
+            <div class="field-row">
+                <textarea id="f_hazard_statements" name="hazard_statements" rows="4"
+                          placeholder="เช่น H314 Causes severe skin burns and eye damage."></textarea>
+            </div>
+        </fieldset>
+
+        <fieldset>
+            <legend>ข้อความระวัง (Precautionary Statements)</legend>
+            <div class="field-row">
+                <textarea id="f_precautionary_statements" name="precautionary_statements" rows="4"
+                          placeholder="เช่น P280 Wear protective gloves/eye protection."></textarea>
+            </div>
+        </fieldset>
+
+        <fieldset>
+            <legend>ผู้ผลิต (Manufacturing)</legend>
+            <div class="field-row">
+                <label for="f_supplier_name">ชื่อบริษัท</label>
+                <input type="text" id="f_supplier_name" name="supplier_name">
+            </div>
+        </fieldset>
+
+    </div><!-- /#labelForm -->
+
+    <div class="card">
+        <div class="step-label">ขั้นตอนที่ 3: เลือกขนาดฉลาก (แนวนอน) แล้วสร้างและดาวน์โหลด PDF</div>
+        <div class="field-row" style="max-width: 320px;">
+            <label for="labelSize">ขนาดฉลาก</label>
+            <select id="labelSize">
+                {% for key, label, w, h in label_size_presets %}
+                <option value="{{ key }}">{{ label }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="field-row hidden" id="customSizeRow" style="max-width: 320px;">
+            <label>กว้าง x สูง (มม., แนวนอน)</label>
+            <div class="actions-row">
+                <input type="text" id="customWidth" inputmode="decimal" placeholder="กว้าง (มม.)" style="width: 120px;">
+                <span>x</span>
+                <input type="text" id="customHeight" inputmode="decimal" placeholder="สูง (มม.)" style="width: 120px;">
+            </div>
+        </div>
+        <div class="actions-row">
+            <button id="generateBtn">สร้าง PDF ฉลาก</button>
+            <a id="downloadLink" class="hidden" href="#" target="_blank">
+                <button type="button" class="secondary">ดาวน์โหลด PDF</button>
+            </a>
+        </div>
+        <div id="generateStatus" class="status"></div>
+    </div>
+
+</main>
+<script>
+    // รายชื่อ key ที่ควรแปลเป็นไทยในหน้านี้ (มาจาก fields.LABEL_TRANSLATABLE_KEYS ฝั่ง backend
+    // ให้ label.js ใช้ค่าเดียวกันเสมอ ไม่ต้องคัดลอกรายการซ้ำสองที่)
+    const LABEL_TRANSLATABLE_KEYS = {{ label_translatable_keys | tojson }};
+</script>
+<script src="/static/label.js"></script>
+</body>
+</html>
