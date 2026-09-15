@@ -712,12 +712,21 @@ def extract_supplier_info(text):
 
 def detect_pictograms(text):
     """
-    เดาสัญลักษณ์ GHS ที่น่าจะเกี่ยวข้อง จากคำ/รหัสที่เจอใน SDS (ส่วนมากอยู่ Section 2)
-    คืน list ของ key ตามลำดับใน PICTOGRAM_KEYWORDS แค่ที่เจอ pattern จริง
+    เดาสัญลักษณ์ GHS ที่น่าจะเกี่ยวข้อง จากคำ/รหัสที่เจอใน SDS Section 2 (Hazard(s) identification)
+    เท่านั้น คืน list ของ key ตามลำดับใน PICTOGRAM_KEYWORDS แค่ที่เจอ pattern จริง
+
+    เดิมค้นหาทั้งไฟล์ ทำให้เกิด false positive จริง: SDS ที่ไม่มีอันตรายเลย (เช่น "This chemical is
+    not considered hazardous... The product contains no substances which... are considered to be
+    hazardous") กลับถูกติ๊กสัญลักษณ์อันตรายหลายตัว เพราะคำอย่าง "corrosive"/"toxic"/"oxidizer" มักโผล่
+    ใน Section 9-11 (คุณสมบัติทางเคมี/พิษวิทยา/ความเข้ากันไม่ได้กับสารอื่น) แม้ตัวสารเองไม่อันตราย
+    ก็ตาม จำกัดขอบเขตแค่ Section 2 (fallback ทั้งไฟล์เฉพาะกรณีหา Section 2 ไม่เจอเลย) เหมือนฟังก์ชัน
+    ตรวจจับอื่นๆ ในไฟล์นี้ (เช่น extract_hazard_statements, extract_precautionary_statements) แก้ปัญหา
+    นี้ได้ เพราะเรื่องนี้กระทบความปลอดภัยจริง (ติ๊กสัญลักษณ์อันตรายผิดบนฉลากหน้างาน)
     """
+    section2 = extract_section(text, 2) or text
     found = []
     for key, patterns in PICTOGRAM_KEYWORDS.items():
-        if any(re.search(p, text, re.IGNORECASE) for p in patterns):
+        if any(re.search(p, section2, re.IGNORECASE) for p in patterns):
             found.append(key)
     return found
 
